@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>File Manager</h1>
+        <div class="auth">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <input type="text" id="registerUsername" placeholder="Username" required>
+                <input type="password" id="registerPassword" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="text" id="loginUsername" placeholder="Username" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+        <div class="file-management">
+            <h2>Files</h2>
+            <form id="createFileForm">
+                <input type="text" id="filename" placeholder="Filename" required>
+                <textarea id="fileContent" placeholder="File content" required></textarea>
+                <button type="submit">Create File</button>
+            </form>
+            <form id="readFileForm">
+                <input type="text" id="readFilename" placeholder="Filename to read" required>
+                <button type="submit">Read File</button>
+            </form>
+            <form id="updateFileForm">
+                <input type="text" id="updateFilename" placeholder="Filename to update" required>
+                <textarea id="updateContent" placeholder="New content" required></textarea>
+                <button type="submit">Update File</button>
+            </form>
+            <form id="deleteFileForm">
+                <input type="text" id="deleteFilename" placeholder="Filename to delete" required>
+                <button type="submit">Delete File</button>
+            </form>
+            <button id="fetchFiles">Fetch File List</button>
+            <div id="fileList"></div>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+</body>
+</html>
