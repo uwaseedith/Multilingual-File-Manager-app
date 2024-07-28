@@ -1,18 +1,55 @@
-const mysql = require('mysql');
-const connection = mysql.createConnection({
+const mysql = require('mysql2');
+
+// Create a connection pool to handle multiple connections efficiently
+const pool = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: 'Nukurimartine2004@',
-  database: 'multilingual-file-manager-app'
+  password: '',
+  database: 'file_manager',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to the database:', err);
-    return;
-  }
-  console.log('Connected to the database.');
-});
+// Export the pool for use in other parts of the application
+module.exports = pool;
 
+// Function to create tables if they do not exist
+const createTables = () => {
+  const tables = [
+    `CREATE TABLE IF NOT EXISTS files (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      filename VARCHAR(255) NOT NULL,
+      path VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`,
+    `CREATE TABLE IF NOT EXISTS uploads (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      filename VARCHAR(255) NOT NULL,
+      path VARCHAR(255) NOT NULL,
+      size INT NOT NULL,
+      type VARCHAR(255) NOT NULL,
+      uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    );`,
+    `CREATE TABLE IF NOT EXISTS user(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL
+    );`
+  ];
 
-module.exports = connection;
+  tables.forEach((sql) => {
+    pool.query(sql, (err, results) => {
+      if (err) {
+        console.error('Error creating table:', err);
+        return;
+      }
+      console.log('Table created or already exists.');
+    });
+  });
+};
+
+// Call the function to ensure tables are created
+createTables();
