@@ -1,12 +1,14 @@
-const fileController = require('../controllers/filecontroller');
-const isAuthenticated = require('../middleware/authmiddleware');
+const express = require('express');
+const fileController = require('../controllers/fileController');
+const isAuthenticated = require('../middleware/authMiddleware');
 
-app.post('/files', filecontroller.createFile);
-app.get('/files/:filename', filecontroller.readFile);
-app.put('/files', filecontroller.updateFile);
-app.delete('/files/:filename', filecontroller.deleteFile);
+const router = express.Router();
 
-// Fetch file list
-router.get('/list', isAuthenticated, filecontroller.getFileList);
+router.get('/:filename', fileController.readFile);
+router.put('/update', fileController.updateFile);
+router.delete('/:filename', fileController.deleteFile);
+router.get('/list', isAuthenticated, fileController.getFileList);
+
+router.get('/uploaded', fileController.getUploadedFiles);
 
 module.exports = router;
