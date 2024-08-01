@@ -3,50 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Manager</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Login / Register</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles/styles.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-box {
+            max-width: 400px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color: #fff;
+        }
+        .form-box.active {
+            display: block;
+        }
+        .form-box.hidden {
+            display: none;
+        }
+        .btn-custom {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .btn-custom:hover {
+            background-color: #0056b3;
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>File Manager</h1>
-        <div class="auth">
-            <h2>Register</h2>
-            <form id="registerForm">
-                <input type="text" id="registerUsername" placeholder="Username" required>
-                <input type="password" id="registerPassword" placeholder="Password" required>
-                <button type="submit">Register</button>
-            </form>
-            <h2>Login</h2>
-            <form id="loginForm">
-                <input type="text" id="loginUsername" placeholder="Username" required>
-                <input type="password" id="loginPassword" placeholder="Password" required>
-                <button type="submit">Login</button>
+    <div class="container mt-5">
+        <div id="login-box" class="form-box active">
+            <h2 class="text-center mb-4">Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <input type="text" id="login-username" class="form-control" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="login-password" class="form-control" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-custom btn-block">Login</button>
+                <p class="text-center mt-3">Don't have an account? <a href="#" onclick="showRegister()">Register here</a></p>
             </form>
         </div>
-        <div class="file-management">
-            <h2>Files</h2>
-            <form id="createFileForm">
-                <input type="text" id="filename" placeholder="Filename" required>
-                <textarea id="fileContent" placeholder="File content" required></textarea>
-                <button type="submit">Create File</button>
+
+        <div id="register-box" class="form-box hidden">
+            <h2 class="text-center mb-4">Register</h2>
+            <form id="register-form">
+                <div class="form-group">
+                    <input type="text" id="register-username" class="form-control" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="register-password" class="form-control" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-custom btn-block">Register</button>
+                <p class="text-center mt-3">Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
             </form>
-            <form id="readFileForm">
-                <input type="text" id="readFilename" placeholder="Filename to read" required>
-                <button type="submit">Read File</button>
-            </form>
-            <form id="updateFileForm">
-                <input type="text" id="updateFilename" placeholder="Filename to update" required>
-                <textarea id="updateContent" placeholder="New content" required></textarea>
-                <button type="submit">Update File</button>
-            </form>
-            <form id="deleteFileForm">
-                <input type="text" id="deleteFilename" placeholder="Filename to delete" required>
-                <button type="submit">Delete File</button>
-            </form>
-            <button id="fetchFiles">Fetch File List</button>
-            <div id="fileList"></div>
         </div>
     </div>
-    <script src="js/script.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            showLogin();
+        
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+        
+                try {
+                    const response = await fetch('/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+        
+                    const result = await response.json();
+                    if (result.success) {
+                        window.location.href = '/home';
+                        loadFilesPage();
+                        console.log('Logged in successfully!')
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred during login. Please try again.');
+                }
+            });
+        
+            document.getElementById('register-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('register-username').value;
+                const password = document.getElementById('register-password').value;
+        
+                try {
+                    const response = await fetch('/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+        
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Registration successful! You can now log in.');
+                        showLogin();
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred during registration. Please try again.');
+                }
+            });
+        });
+        
+        function showLogin() {
+            document.getElementById('login-box').classList.add('active');
+            document.getElementById('register-box').classList.remove('active');
+        }
+        
+        function showRegister() {
+            document.getElementById('register-box').classList.add('active');
+            document.getElementById('login-box').classList.remove('active');
+        }
+        
+    </script>
 </body>
 </html>
